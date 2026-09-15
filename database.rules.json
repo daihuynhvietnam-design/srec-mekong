@@ -1,0 +1,45 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || (auth != null && (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin'))",
+        ".write": "auth != null && $uid === auth.uid && ((!data.exists() && newData.child('role').val() === 'user') || (data.exists() && newData.child('role').val() === data.child('role').val())) || (auth != null && (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin'))",
+        "role": {
+          ".write": "auth != null && (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin') || (!data.exists() && auth.uid === $uid && newData.val() === 'user')"
+        }
+      }
+    },
+    "hotels": {
+      ".read": true,
+      ".write": "auth != null && (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+    },
+    "bookings": {
+      ".read": "auth != null && ((root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin') || (query.orderByChild === 'userId' && query.equalTo === auth.uid))",
+      "$id": {
+        ".write": "auth != null && ((root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin') || (!data.exists() && newData.child('userId').val() === auth.uid && newData.child('status').val() === 'pending'))"
+      }
+    },
+    "notifications": {
+      "$uid": {
+        ".read": "$uid === auth.uid || (auth != null && (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin'))",
+        ".write": "$uid === auth.uid || (auth != null && (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin'))"
+      }
+    },
+    "chats": {
+      "$uid": {
+        ".read": "auth != null && ($uid === auth.uid || (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin'))",
+        ".write": "auth != null && ($uid === auth.uid || (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin'))"
+      }
+    },
+    "reviews": {
+      ".read": true,
+      "$hotelId": {
+        "$reviewId": {
+          ".write": "auth != null && (root.child('users').child(auth.uid).val() === 'admin' || root.child('users').child(auth.uid).child('role').val() === 'admin')"
+        }
+      }
+    }
+  }
+}
